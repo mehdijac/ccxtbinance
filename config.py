@@ -1,0 +1,3 @@
+ACTIVE_TRADING_PAIRS=[{'symbol':'BTC/BUSD'}]
+WALLET=100.0
+
