@@ -1,4 +1,5 @@
 from datetime import datetime 
+import pandas as pd
 
 def get_local_timestamp():
     """
@@ -18,4 +19,15 @@ def profit_loss(history_orders,initial_balance):
         else:
             relative_ratio=relative_ratio*history_orders[i]
 
-    return initial_balance*(relative_ratio-1)
+    return initial_balance*(relative_ratio-1) 
+
+
+def get_bars(exchange,pair,limit,timeframe):
+
+    bars = exchange.fetch_ohlcv(pair, timeframe=timeframe, limit=limit)
+    df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+    df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
+
+    return df
+
+

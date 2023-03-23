@@ -11,6 +11,7 @@ import time
 import warnings
 warnings.filterwarnings('ignore')
 
+
 import ccxt
 import schedule
 
@@ -21,6 +22,7 @@ global balance
 global pnl
 global binance_spot_api
 
+
 in_position=False
 balance=WALLET
 pnl=[]
@@ -28,7 +30,7 @@ orders=[]
 
 def init_bot():
     """
-    This function create a client to the Binance api
+    This function creates a client to the Binance api
     """
     global binance_spot_api 
     binance_spot_api=ccxt.binance({
@@ -43,7 +45,7 @@ def init_bot():
 
 def is_buy_signal(df,symbol:str):
     """
-    This function identity the period when it is suitable to buy
+    This function identify the period when it is suitable to buy
     """
     last_index=len(df)-1
     signal=(not df['in_uptrend'][last_index-1] and df['in_uptrend'][last_index])
@@ -53,10 +55,10 @@ def is_buy_signal(df,symbol:str):
 
 def is_sell_signal(df,symbol:str):
     """
-    This function identity the period when it is suitable to sell
+    This function identify the period when it is suitable to sell
     """  
     last_index=len(df)-1
-    signal=(df['in_uptrend'][last_index-1] and not df['in_uptrend'][last_index])
+    signal=(df['in_uptrend'][last_index-1] and not df['in_uptrend'][last_index]) and df["close"][last_index]>(orders[-1]+10)
 
     return signal
 
@@ -71,42 +73,36 @@ def buy_sell_orders(df,symbol:str):
     global orders
     global balance
     global pnl
+    global timeframe
 
     last_index=len(df)-1
     
-    if is_buy_signal(df,symbol):
-        print("\N{blossom}"+" changed to uptrend, buy")
-        if not in_position:
+    if not in_position:
+        
+        if is_buy_signal(df,symbol):
             #order = exchange.create_market_buy_order
             orders.append(df["close"][last_index])
+            print("\N{blossom}"+ f" changed to uptrend, buy order executed at price { orders[-1]}")
             in_position = True
-        else:
-            print("already in position, nothing to do")
-            
     
-    if is_sell_signal(df,symbol) :
-        print("\N{rose}"+" changed to downtrend, sell")
-        if in_position and df["close"][last_index]>orders[-1]:
+    else :
+        
+        if is_sell_signal(df,symbol) :
             orders.append(df["close"][last_index])
             pnl.append(profit_loss(orders,balance))
             #order = exchange.create_market_sell_order
             print("\N{money with wings}"+"\N{money with wings}"+"\N{money with wings}"+f' profit and loss : {pnl[-1]}')
             in_position = False
-        else:
-            print("You aren't in position, nothing to sell")
+        
             
 
 
 def run_bot(pair,timeframe,limit,last_period,weight_ma_margion):
 
     print("\N{spouting whale}"+f"  Fetching new bars for {datetime.now().isoformat()}")
-
-    bars = binance_spot_api.fetch_ohlcv(pair, timeframe=timeframe, limit=limit)
-
-    df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
-    df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
-
+    df = get_bars(binance_spot_api,pair,limit,timeframe)
     Intrend_data = In_trend(df,last_period,weight_ma_margion)
+
     
     buy_sell_orders(Intrend_data,pair)
 
@@ -116,9 +112,9 @@ if __name__=='__main__':
 
     pair=ACTIVE_TRADING_PAIRS[0]['symbol']
     timeframe='1s'
-    limit=50
+    limit=80
     last_period=5
-    weight_ma_margion=0.5
+    weight_ma_margion=2
     #since=
 
     init_bot()
@@ -127,10 +123,12 @@ if __name__=='__main__':
 
     start_time= get_local_timestamp()
     print("\N{alarm clock}"+f' start time  : {start_time}')
-    while (get_local_timestamp()-start_time)<4000:
+
+
+
+    while (get_local_timestamp()-start_time)<500:
         schedule.run_pending()
         time.sleep(1)
-    plt.plot(pnl)
-    plt.show()
+    print("\N{money with wings}"+"\N{money with wings}"+"\N{money with wings}"+f' profit and loss : {pnl[-1]}')
     print("\N{alarm clock}"+ f' end time  : {get_local_timestamp()}')
 
