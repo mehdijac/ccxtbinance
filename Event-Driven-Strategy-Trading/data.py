@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 pd.set_option('display.max_rows', None)
 
-from event import MarketEvent,QuitEvent
+from event import MarketEvent
 
 
 
@@ -204,7 +204,7 @@ class BinanceDataHandlerBacktest(BacktestDataHandler):
         self.generator_data=self._load_bars(self.symbol_list[0], TF='1s', N=501)
 
         self.current='first'
-
+        self.continue_backtest=True
 
     def _connect_spot_api(self):
         """
@@ -215,7 +215,7 @@ class BinanceDataHandlerBacktest(BacktestDataHandler):
         "secret": os.environ.get('bs')
         })
     
-    def _get_bars(self,symbol,TF='1s',N=5000):
+    def _get_bars(self,symbol,TF='1s',N=50000):
         """
         Fetch the historical data from Binance Exchange, converting
         them into pandas DataFrames.
@@ -248,12 +248,8 @@ class BinanceDataHandlerBacktest(BacktestDataHandler):
                 yield self.data_history[symbol].iloc[(i*N):(i+1)*N-1]
 
     def get_latest_bars(self, symbol, TF='1s', N=501):
-        try :
-            self.current=next(self.generator_data)
-            print(self.current.iloc[-1])
+
             return self.current
-        except:
-            return
     
             
     def get_latest_bar_value(self, symbol, val_type,TF='1s'):
@@ -274,10 +270,11 @@ class BinanceDataHandlerBacktest(BacktestDataHandler):
 
 
     def update_bars(self):
-        if self.current is None:
-            self.events.put(QuitEvent())
-        else :
-            self.events.put(MarketEvent())
+        try :
+            self.current=next(self.generator_data)
+        except StopIteration:
+            self.continue_backtest=False
+        self.events.put(MarketEvent())
 
 
             

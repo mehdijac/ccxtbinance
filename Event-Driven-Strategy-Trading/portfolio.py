@@ -64,7 +64,7 @@ class Portfolio(object):
         self.curve = pd.DataFrame(self.all_holdings)
         self.curve.set_index('datetime', inplace=True)
         final_pnl=list(map(lambda s: profit_loss(self.curve[s], self.initial_capital),self.symbol_list))
-
+        
         self.pnl.append(final_pnl[0])
 
 

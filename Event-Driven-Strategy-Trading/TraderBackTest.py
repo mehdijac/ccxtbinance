@@ -75,13 +75,14 @@ class TraderBackTest(object):
         """
         print("\N{feather}"+' Bot starts trading.......')
         
-        current_pnl=0
        
-        while self.portfolio.pnl==[] or current_pnl<0.001:
+        while True:
             
-
-            self.data_handler.update_bars()
-
+            if self.data_handler.continue_backtest==True :
+                self.data_handler.update_bars()
+            else :
+                break
+            
             while True:
                 try:
                     event = self.events.get(False)
@@ -90,8 +91,7 @@ class TraderBackTest(object):
                 else:
                     
                     if event is not None:
-                        if event.type=='QUIT':
-                            break
+
                         if event.type == 'MARKET':
                             self.strategy.calculate_signals(event)
 

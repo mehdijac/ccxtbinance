@@ -123,12 +123,3 @@ class FillEvent(Event):
         # To be specified
         return 0
     
-class QuitEvent(Event): 
-    """
-    Handles the event of receiving a quitting backtesting.
-    """
-    def __init__(self):
-        """
-        Initialises the QuitEvent. 
-        """
-        self.type = 'QUIT'
