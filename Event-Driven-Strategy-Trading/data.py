@@ -124,7 +124,7 @@ class BinanceDataHandler(LiveDataHandler):
         if symbol in self.symbol_list :
         
             bars = self.binance_spot_api.fetch_ohlcv(symbol, timeframe=TF, limit=N+1)
-            df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'],inplace=true)
+            df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
             df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
 
             return df
