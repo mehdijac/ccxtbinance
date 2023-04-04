@@ -124,7 +124,7 @@ class BinanceDataHandler(LiveDataHandler):
         if symbol in self.symbol_list :
         
             bars = self.binance_spot_api.fetch_ohlcv(symbol, timeframe=TF, limit=N+1)
-            df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+            df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'],inplace=true)
             df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
 
             return df
@@ -154,6 +154,14 @@ class BacktestDataHandler(object):
         from the last bar.
         """
         raise NotImplementedError("Should implement get_latest_bar_values()")
+    
+    @abstractmethod
+    def get_latest_bars_values(self, symbol, val_type,TF,N=1):
+        """
+        Returns N value of the Open, High, Low, Close or Volume
+        from the last bar.
+        """
+        raise NotImplementedError("Should implement get_latest_bars_values()")
 
     
     @abstractmethod
@@ -244,8 +252,8 @@ class BinanceDataHandlerBacktest(BacktestDataHandler):
             """
             n=int(len(self.data_history[symbol])/N)
             for i in range(n):
-                
-                yield self.data_history[symbol].iloc[(i*N):(i+1)*N-1]
+                current_data=self.data_history[symbol].iloc[(i*N):(i+1)*N-1]
+                yield pd.DataFrame(current_data.values,columns=current_data.columns)
 
     def get_latest_bars(self, symbol, TF='1s', N=501):
             
@@ -260,10 +268,13 @@ class BinanceDataHandlerBacktest(BacktestDataHandler):
         
         return self.current[val_type].values[-1]
         
-    
  
-    def get_latest_bar_values(self, symbol, val_type,TF,N=1):
+    def get_latest_bar_values(self, symbol, val_type,TF='1s',N=1):
      
+        return self.current[val_type]
+    
+    def get_latest_bars_values(self, symbol, val_type,TF='1s',N=1):
+        
         return self.current[val_type]
     
 

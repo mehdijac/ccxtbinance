@@ -48,7 +48,6 @@ def In_trend(df, last_period=7, weight_ma_margion=3):
 
     for current in range(1, len(df.index)):
         previous = current - 1
-
         if df['close'][current] > df['upperband'][previous]:
            
            df.loc[current,['in_uptrend']] = True

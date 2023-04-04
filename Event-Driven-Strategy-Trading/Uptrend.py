@@ -24,7 +24,7 @@ class Intrend(Strategy):
     """ 
 
     def __init__(
-        self, bars, events, weight_ma_margion=1, window=5,limit=501):
+        self, bars, events, weight_ma_margion=1, window=5,limit=81):
         """
         Initialises the Intrend Strategy.
         Parameters:
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     #         BinanceDataHandler, SimulatedExecutionHandler, 
     #         Portfolio, Intrend)
 
-    start_date='2022-07-21 00:00:00'
+    start_date='2023-04-01 00:00:00'
 
     T = TraderBackTest(symbol_list, initial_capital, start_date,heartbeat,
                 BinanceDataHandlerBacktest, SimulatedExecutionHandler, 

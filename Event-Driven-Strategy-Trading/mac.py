@@ -8,9 +8,9 @@ import statsmodels.api as sm
 
 from strategy import Strategy
 from event import SignalEvent
-from backtest import Backtest
 from Trader import Trader
-from data import HistoricCSVDataHandler,BinanceDataHandler
+from TraderBackTest import TraderBackTest
+from data import BinanceDataHandler,BinanceDataHandlerBacktest
 from execution import SimulatedExecutionHandler
 from portfolio import Portfolio
 
@@ -112,10 +112,17 @@ if __name__ == "__main__":
     backtest.simulate_trading()
     """
     symbol_list = ['BTC/USDT']
+
     initial_capital = 100.0
+
     heartbeat = 0.0
 
-    T = Trader(symbol_list, initial_capital, heartbeat,
-            BinanceDataHandler, SimulatedExecutionHandler, 
-            Portfolio, MovingAverageCrossStrategy)
+
+    start_date='2022-07-21 00:00:00'
+
+    T = TraderBackTest(symbol_list, initial_capital, start_date,heartbeat,
+                BinanceDataHandlerBacktest, SimulatedExecutionHandler, 
+                Portfolio, MovingAverageCrossStrategy)
+    
+
     T.simulate_trading()
