@@ -201,9 +201,8 @@ class BinanceDataHandlerBacktest(BacktestDataHandler):
         self.exchange=self._connect_spot_api()
         self.data_history= {s:self._get_bars(s) for s in self.symbol_list}
 
-        self.generator_data=self._load_bars(self.symbol_list[0], TF='1s', N=501)
 
-        self.current='first'
+        self.current=None 
         self.continue_backtest=True
 
     def _connect_spot_api(self):
@@ -245,10 +244,15 @@ class BinanceDataHandlerBacktest(BacktestDataHandler):
             """
             n=int(len(self.data_history[symbol])/N)
             for i in range(n):
+                
                 yield self.data_history[symbol].iloc[(i*N):(i+1)*N-1]
 
     def get_latest_bars(self, symbol, TF='1s', N=501):
-
+            
+            if self.current is None :
+                self.generator_data=self._load_bars(symbol, TF='1s', N=N)
+                self.current=next(self.generator_data)
+            
             return self.current
     
             
@@ -270,10 +274,11 @@ class BinanceDataHandlerBacktest(BacktestDataHandler):
 
 
     def update_bars(self):
-        try :
-            self.current=next(self.generator_data)
-        except StopIteration:
-            self.continue_backtest=False
+        if self.current is not None:
+            try :
+                self.current=next(self.generator_data)
+            except StopIteration:
+                self.continue_backtest=False
         self.events.put(MarketEvent())
 
 

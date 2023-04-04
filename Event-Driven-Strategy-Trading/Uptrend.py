@@ -66,9 +66,8 @@ class Intrend(Strategy):
                 
                 print("\N{package}"+f"  Fetching new bars {s} from Market")
 
-                bars = self.bars.get_latest_bars(s, N=self.limit ).copy()
-              
-                
+                bars = self.bars.get_latest_bars(s, N=self.limit).copy()
+               
                 df=In_trend(bars,self.window,self.weight_ma_margion)
                 
                 bar_date=self.bars.get_latest_bar_datetime(s,'1s')
@@ -77,8 +76,8 @@ class Intrend(Strategy):
                 if bars is not None and bars.size>0:#bars != []:
                     
                     last_index=len(df)-1
-                    is_buy_signal=(not df['in_uptrend'][last_index-1] and df['in_uptrend'][last_index])
-                    is_sell_signal = (df['in_uptrend'][last_index-1] and not df['in_uptrend'][last_index]) 
+                    is_buy_signal=(not df['in_uptrend'].iloc[last_index-1] and df['in_uptrend'].iloc[last_index])
+                    is_sell_signal = (df['in_uptrend'].iloc[last_index-1] and not df['in_uptrend'].iloc[last_index]) 
                     
                     symbol = s
                     dt = datetime.datetime.utcnow()
