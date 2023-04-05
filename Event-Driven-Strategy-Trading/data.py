@@ -222,7 +222,7 @@ class BinanceDataHandlerBacktest(BacktestDataHandler):
         "secret": os.environ.get('bs')
         })
     
-    def _get_bars(self,symbol,TF='1s',N=50000):
+    def _get_bars(self,symbol,TF='1s',N=5000):
         """
         Fetch the historical data from Binance Exchange, converting
         them into pandas DataFrames.
