@@ -4,7 +4,7 @@ import datetime
 
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
+import sys
 
 from strategy import Strategy
 from event import SignalEvent
@@ -102,17 +102,20 @@ class Intrend(Strategy):
 
 if __name__ == "__main__":
 
+    
+
     symbol_list = ['BTC/USDT']
 
     initial_capital = 100.0
 
     heartbeat = 0.0
 
-    # T = Trader(symbol_list, initial_capital, heartbeat,
-    #         BinanceDataHandler, SimulatedExecutionHandler, 
-    #         Portfolio, Intrend)
-
     start_date='2023-04-01 00:00:00'
+
+
+    #T = Trader(symbol_list, initial_capital, heartbeat,
+    #      BinanceDataHandler, SimulatedExecutionHandler, 
+    #     Portfolio, Intrend)
 
     T = TraderBackTest(symbol_list, initial_capital, start_date,heartbeat,
                 BinanceDataHandlerBacktest, SimulatedExecutionHandler, 
