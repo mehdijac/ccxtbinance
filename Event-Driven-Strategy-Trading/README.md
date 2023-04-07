@@ -1,4 +1,4 @@
-# High level architecture for the event driven strategy 
+## High level architecture for the event driven strategy 
 
 ![alt text](https://github.com/mehdijac/ccxtbinance/blob/main/Event-Driven-Strategy-Trading/HighLevelArchitecture.png?raw=true)
 
